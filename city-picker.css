@@ -1,0 +1,82 @@
+@charset "UTF-8";
+
+.city-picker{
+	margin: 5px 0 5px 0;
+	/*background: yellow;*/
+	
+	/*↓↓↓↓设置文本内容为不可编辑选取↓↓↓↓*/
+	moz-user-select: -moz-none;
+	-moz-user-select: none;
+	-o-user-select:none;
+	-khtml-user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+.city-picker .picker-title{
+	display: flex;
+	margin: 6px 10px 6px 10px;
+	/*background: red;*/
+}
+
+.picker-title .picker-selector{
+	display: flex;
+	width: auto;
+	border-radius: 3px;
+}
+.picker-title .picker-selector:hover{
+	cursor: pointer;
+}
+.picker-selector .text{
+	margin: 0 2px 0 5px;
+}
+.picker-selector .flag{
+	margin: 0 5px 0 2px;
+}
+
+.city-picker .picker-panel{
+	height: auto;
+	border-radius: 3px;
+	display: none;
+}
+.picker-panel .picker-item{
+	display: inline-block;
+	margin: 8px 7px 7px 12px;/*up8 down7 left+right=19*/
+	padding: 2px 10px 3px 10px;
+	border-radius: 3px;
+}
+.picker-panel .picker-item:hover{
+	cursor: pointer;
+}
+.city-picker .picker-panel:hover{
+	cursor: default;
+}
+
+/*颠倒显示*/
+.picker-selector .rotate{
+	filter: progid: DXImageTransform.Microsoft.BasicImage(rotation=2);
+	/* IE6,IE7 */
+	ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)";
+	/* IE8 */
+	-moz-transform: rotate(-180deg);
+	/* 火狐3.5+ */
+	-o-transform: rotate(-180deg);
+	/* Opera 10.5 */
+	-webkit-transform: rotate(-180deg);
+	/* Safari 3.1+, Chrome */
+}
+
+/*下箭头图标*/
+@font-face{
+	font-family:icon;
+	src:url(./font/iconfont.eot?v=240);
+	src:url(./font/iconfont.eot?v=240#iefix) format('embedded-opentype'),url(./font/iconfont.svg?v=240#iconfont) format('svg'),url(./font/iconfont.woff?v=240) format('woff'),url(./font/iconfont.ttf?v=240) format('truetype')
+}
+.icon{
+	font-family:icon !important;
+	font-size:16px;font-style:normal;
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:grayscale;
+}
+.flag-icon:before{content:"\e900";}
