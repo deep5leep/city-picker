@@ -130,7 +130,7 @@ function CityPicker(parent, conf, data) {
 		$(text).addClass("text");
 		$(flag).addClass("icon flag-icon flag");
 		//设置属性文本
-		if(isMultiSelect && obj['obj'] == null) {
+		if(isMultiSelect) {
 			$(text).text(obj['text']);
 		} else {
 			hasDefaultValue ? $(text).text(obj['obj'][0]['text']): $(text).text(obj['text']);
@@ -444,6 +444,18 @@ function CityPicker(parent, conf, data) {
 	}
 	//添加事件
 	addEvent(this.dom);
+	//多选模式下默认选中第一个selector
+	if(isMultiSelect && hasDefaultSelector) {
+		//清除其他选择状态
+		$(this.dom).children('.picker-title').children().each(function() {
+			this.selectedNumber = {};
+			$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
+			$(this).children('.flag').css("color", themeColor);
+			$(this).children('.flag').removeClass('rotate');
+		});
+		selectedSelector = 0;
+		$(this.dom).children('.picker-title').children(':first').css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
+	}
 	//加入到指定父容器
 	$(parent).append(this.dom);
 	return this;
