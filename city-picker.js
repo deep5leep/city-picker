@@ -1,13 +1,14 @@
-﻿/*	city-picker城市选择器，基于jquery-3.3.1
+/*	city-picker城市选择器，基于jquery-3.3.1
  * 	名为城市选择器，实际不仅仅用于城市选择器，可以作为多级面板，只要传递的json对象符合规范
  * 	主要参数选项
  * 		- 各种样式参数
  * 		- hasDefaultValue=true|false，是否拥有是否默认选项，如果开启则默认选择第一个元素，默认为开启，这与之后json格式有关
  * 		- isMultiSelect=true|false，是否为多选，单选的话，可以根据json对象，级联的创建组件。如果是多选，那就只有一级选项，不会再继续展开
+ * 		- hasDefaultSelector=true|false，是否有默认的selector，如果有，第一项的json数据被认为是默认值
  * 	json对象格式说明：
  * 		[单选模式]
  * 		{
- * 			"text": "这里的内容自定义",//整体的名字，不会出现在组件中
+ * 			"text": "这里的内容自定义",//整体的名字，selector中值缺省的情况下显示的名称
  * 			"obj": [
  * 				{"text": "默认项"},//如果有默认项，array第一个应为默认项，不会被展开
  * 				{
@@ -19,20 +20,22 @@
  * 			]
  * 		}
  * 		[多选模式]
- * 		{
- * 			"text": "这里的内容自定义",//整体的名字，不会出现在组件中
+ * 		[{
+ * 			"text": "这里的内容自定义",//整体的名字，selector中值缺省的情况下显示的名称
  * 			"obj": [
  * 				{"text": "默认项"},//如果有默认项
  * 				{"text": "第一项"},
  * 				{"text": "第二项"},
  * 				...
  * 			]
- * 		}
+ * 		}, {...}, ...]
  * 
  * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 	- created by lr
  * 	- 2019-01-30
  * * * * * * * * * * * * * * * * * * * * * * * * * */ 
+//引人城市数据
+document.write("<script type=\"text/javascript\" src=\"../modules/city-picker/city-picker.citydata.js\" charset=\"UTF-8\"></script>");
 
 //参数配置
 CityPicker.pickerWidth = "770px";//picker宽度
@@ -46,6 +49,7 @@ CityPicker.fontSize = "14px";//字体大小
 CityPicker.selectorGap = "10px";//selector之间的间隙
 CityPicker.hasDefaultValue = true;//selector是有默认值
 CityPicker.isMultiSelect = false;//是否支持多选
+CityPicker.hasDefaultSelector = false;//是否有默认的selector
 
 //全局参数配置函数
 CityPicker.config = function(data) {
@@ -76,12 +80,14 @@ function CityPicker(parent, conf, data) {
 	//布尔值取参特殊
 	var hasDefaultValue = (conf['hasDefaultValue'] != null) ? conf['hasDefaultValue']: CityPicker.hasDefaultValue;
 	var isMultiSelect = (conf['isMultiSelect'] != null) ? conf['isMultiSelect']: CityPicker.isMultiSelect;
+	var hasDefaultSelector = (conf['hasDefaultSelector'] != null) ? conf['hasDefaultSelector']: CityPicker.hasDefaultSelector;
 	
 	//城市数据读取
 	data = data || CityPicker.citydata;
 	
 	//私有属性
 	var panelFor;//当前panel展开的selector
+	var selectedSelector;
 	
 	//共有属性
 	this.dom;//对应dom元素
@@ -124,7 +130,11 @@ function CityPicker(parent, conf, data) {
 		$(text).addClass("text");
 		$(flag).addClass("icon flag-icon flag");
 		//设置属性文本
-		$(text).text(obj['obj'][0]['text']);
+		if(isMultiSelect && obj['obj'] == null) {
+			$(text).text(obj['text']);
+		} else {
+			hasDefaultValue ? $(text).text(obj['obj'][0]['text']): $(text).text(obj['text']);
+		}
 		selector.obj = obj;
 		selector.isOpen = false;//是否展开，默认为false
 		//字符串转数字，计算，再转换为字符串
@@ -144,11 +154,17 @@ function CityPicker(parent, conf, data) {
 		$(selector).append(text);
 		$(selector).append(flag);
 		$(parent).append(selector);
+		if(hasDefaultSelector && $(selector).index() == 0) {
+			selectedSelector = 0;
+			$(flag).removeClass("icon flag-icon");
+			$(selector).css({"color": backgroundColor, "background": themeColor, "border": "1px solid "+themeColor});
+		}
 		return selector;
 	}
 	
 	//创建panel内itmes
 	var createItems = function(obj, panel, number) {//obj为json数组
+		if(obj == null) return;
 		for(var i = 0; i < obj.length; i++) {
 			var o = obj[i];
 			//创建
@@ -193,8 +209,33 @@ function CityPicker(parent, conf, data) {
 				$(selectors).children('.flag').removeClass('rotate');
 				$(selectors).each(function(){this.isOpen = false;});
 				//移除所有的selector选中状态
-				$(selectors).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
-				$(selectors).children('.flag').css("color", backgroundColor);
+				$(selectors).each(function() {
+					if(hasDefaultSelector && $(this).index() == 0) return;
+					if(this.selectedNumber == null) {
+						$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
+						$(this).children('.flag').css("color", themeColor);
+					} else {
+						if(typeof(this.selectedNumber) == "number") {
+							$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
+							$(this).children('.flag').css("color", backgroundColor);
+						} else {
+							var isSelected = false;
+							for(var per in this.selectedNumber) {
+								if(this.selectedNumber[per]) {
+									isSelected = true;
+									break;
+								}
+							}
+							if(isSelected) {
+								$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
+								$(this).children('.flag').css("color", backgroundColor);
+							} else {
+								$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
+								$(this).children('.flag').css("color", themeColor);
+							}
+						}
+					}
+				});
 				//为panel重新填装数据
 				$(panel).empty();//panel删除旧的数据
 				//panel加载新的数据
@@ -245,7 +286,33 @@ function CityPicker(parent, conf, data) {
 			}
 		};
 		//selector选项事件
-		$(selectors).click(selectorClick);
+		if(isMultiSelect) {
+			$(selectors).each(function() {
+				if(this.obj['obj'] != null) {
+					$(this).click(selectorClick);
+				} else {
+					$(this).click(function() {
+						$(panel).hide();
+						//清除其他选择状态
+						$(selectors).each(function() {
+							if(typeof(this.selectedNumber) == "number") {
+								this.selectedNumber = null;
+							} else {
+								this.selectedNumber = {};
+							}
+							this.isOpen = false;
+							$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
+							$(this).children('.flag').css("color", themeColor);
+							$(this).children('.flag').removeClass('rotate');
+						});
+						selectedSelector = 0;
+						$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
+					});
+				}
+			});
+		} else {
+			$(selectors).click(selectorClick);
+		}
 		
 		var itemClick = function() {
 			//清除其他item的选择状态
@@ -256,7 +323,6 @@ function CityPicker(parent, conf, data) {
 			$(panelFor).children('.text').text($(this).text());
 			//设置selector被选中元素的下标
 			panelFor.selectedNumber = $(this).prevAll().length;
-			//alert(JSON.stringify(this['obj']));
 			if(this['obj']['obj'] != null) {//如果json对象未到底
 				//删除此级之后所有selector
 				$(panelFor).nextAll().remove();
@@ -304,7 +370,7 @@ function CityPicker(parent, conf, data) {
 						if(unselect) {
 							panelFor.selectedNumber['0'] = true;
 							$(items[0]).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
-						}	
+						}
 					} else {
 						//设置选中状态
 						panelFor.selectedNumber[index] = true;
@@ -319,12 +385,41 @@ function CityPicker(parent, conf, data) {
 					//设置取消选中
 					panelFor.selectedNumber[index] = false;
 					$(this).css({"background": panelColor, "border": "1px solid "+panelColor, "color": themeColor});
+					//如果无选中则跳回默认值
+					if(hasDefaultSelector) {//有默认selector的情况下
+						var unselect = true;
+						for(var per in panelFor.selectedNumber) {
+							if(panelFor.selectedNumber[per]) {
+								unselect = false;
+								break;
+							}
+						}
+						if(unselect) {
+							selectedSelector = 0;
+							$(selectors[0]).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
+							return;
+						}
+					}
 				} else {
 					//设置选中状态
 					panelFor.selectedNumber[index] = true;
 					$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
 				}
-			}	
+			}
+			//清除其他选择状态
+			$(selectors).each(function() {
+				if(this == panelFor) return;
+				if(typeof(this.selectedNumber) == "number") {
+					this.selectedNumber = null;
+				} else {
+					this.selectedNumber = {};
+				}
+				$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
+				$(this).children('.flag').css("color", themeColor);
+			});
+			selectedSelector = $(panelFor).index();
+//			$(panelFor).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
+//			$(panelFor).children('.flag').css("color", backgroundColor);
 		};
 		//items点击事件
 		$(items).click(isMultiSelect ? itemMultiClick: itemClick);
@@ -333,12 +428,23 @@ function CityPicker(parent, conf, data) {
 	//代码，初始化
 	if(data == null) return;//json数据不能为空
 	this.dom = createPicker();
-	//创建selector并设置panelFor
-	panelFor = createSelector(data, $(this.dom).children('.picker-title'));
-	//创建所有item
-	createItems(data['obj'], $(this.dom).children('.picker-panel'), (hasDefaultValue?0:null));
+	if(isMultiSelect) {
+		//alert(JSON.stringify(data));
+		for(var i = 0; i < data.length; i++) {
+			//创建selector
+			createSelector(data[i], $(this.dom).children('.picker-title'));
+			//创建所有item
+			createItems(data[i]['obj'], $(this.dom).children('.picker-panel'), (hasDefaultValue?0:null));
+		}
+	} else {
+		//创建selector
+		createSelector(data, $(this.dom).children('.picker-title'));
+		//创建所有item
+		createItems(data['obj'], $(this.dom).children('.picker-panel'), (hasDefaultValue?0:null));
+	}
 	//添加事件
 	addEvent(this.dom);
 	//加入到指定父容器
 	$(parent).append(this.dom);
+	return this;
 }
