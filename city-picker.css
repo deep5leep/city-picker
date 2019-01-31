@@ -49,9 +49,6 @@
 .picker-panel .picker-item:hover{
 	cursor: pointer;
 }
-.city-picker .picker-panel:hover{
-	cursor: default;
-}
 
 /*颠倒显示*/
 .picker-selector .rotate{
