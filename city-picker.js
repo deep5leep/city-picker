@@ -40,7 +40,7 @@ document.write("<script type=\"text/javascript\" src=\"../modules/city-picker/ci
 //参数配置
 CityPicker.pickerWidth = "770px";//picker宽度
 CityPicker.pickerMinHeight = "40px";//picker最小高度
-CityPicker.panelMinHeight = "60px";//panel最小高度
+CityPicker.panelMinHeight = "30px";//panel最小高度
 CityPicker.themeColor = "#01AAED";//picker主色调
 CityPicker.backgroundColor = "white";//picker次色调
 CityPicker.panelColor = "#f2f2f2";//picker面板背景色调
@@ -107,11 +107,11 @@ function CityPicker(parent, conf, data) {
 		$(city_picker).css({"width": pickerWidth, "min-height": pickerMinHeight});
 		//字符串转数字，计算，再转换为字符串
 		var w = (parseInt(pickerWidth.substr(0, pickerWidth.length-2))-20)+"px";
-		var h = (parseInt(pickerMinHeight.substr(0, pickerMinHeight.length-2))-12)+"px";
-		$(picker_title).css({"width": w, "height": h});
+		var h = (parseInt(pickerMinHeight.substr(0, pickerMinHeight.length-2))-6)+"px";
+		$(picker_title).css({"width": w, "min-height": h});
 		
-		w = (parseInt(pickerWidth.substr(0, pickerWidth.length-2))-2)+"px";
-		h = (parseInt(pickerMinHeight.substr(0, panelMinHeight.length-2))-2)+"px";
+		w = (parseInt(pickerWidth.substr(0, pickerWidth.length-2))-2-20)+"px";
+		h = (parseInt(panelMinHeight.substr(0, panelMinHeight.length-2))-2)+"px";
 		$(picker_panel).css({"width": w, "min-height": h, "background": panelColor, "border": "1px solid "+panelColor});
 		
 		//设置父子关系
@@ -138,7 +138,7 @@ function CityPicker(parent, conf, data) {
 		selector.obj = obj;
 		selector.isOpen = false;//是否展开，默认为false
 		//字符串转数字，计算，再转换为字符串
-		var h = (parseInt(pickerMinHeight.substr(0, pickerMinHeight.length-2))-12-2)+"px";
+		var h = (parseInt(pickerMinHeight.substr(0, pickerMinHeight.length-2))-6-6-2)+"px";
 		$(selector).css({"margin-right": selectorGap});
 		$(text).css({"font-size": fontSize});
 		$(flag).css({"color": themeColor});
