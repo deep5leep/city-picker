@@ -16,14 +16,15 @@
 
 .city-picker .picker-title{
 	display: flex;
-	margin: 6px 10px 6px 10px;
-	/*background: red;*/
+	margin: 3px 10px 3px 10px;
+	flex-wrap: wrap;/*排列不下时，如何换行，默认nowrap*/
 }
 
 .picker-title .picker-selector{
 	display: flex;
 	width: auto;
 	border-radius: 3px;
+	margin: 3px 0 3px 0;
 }
 .picker-title .picker-selector:hover{
 	cursor: pointer;
@@ -39,11 +40,12 @@
 	height: auto;
 	border-radius: 3px;
 	display: none;
+	padding: 5px 10px 5px 10px;
 }
 .picker-panel .picker-item{
 	display: inline-block;
-	margin: 8px 7px 7px 12px;/*up8 down7 left+right=19*/
-	padding: 2px 10px 3px 10px;
+	margin: 3px 7px 2px 0;
+	padding: 2px 7px 3px 7px;
 	border-radius: 3px;
 }
 .picker-panel .picker-item:hover{
