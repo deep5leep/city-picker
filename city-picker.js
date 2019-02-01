@@ -44,7 +44,8 @@ CityPicker.panelMinHeight = "30px";//panel最小高度
 CityPicker.themeColor = "#01AAED";//picker主色调
 CityPicker.backgroundColor = "white";//picker次色调
 CityPicker.panelColor = "#f2f2f2";//picker面板背景色调
-CityPicker.fontColor = "black";//字体颜色
+CityPicker.fontColor = "#01AAED";//字体颜色
+CityPicker.borderColor = "#01AAED";//边框颜色
 CityPicker.fontSize = "14px";//字体大小
 CityPicker.selectorGap = "10px";//selector之间的间隙
 CityPicker.hasDefaultValue = true;//selector是有默认值
@@ -75,6 +76,7 @@ function CityPicker(parent, conf, data) {
 	var backgroundColor = conf['backgroundColor'] || CityPicker.backgroundColor;
 	var panelColor = conf['panelColor'] || CityPicker.panelColor;
 	var fontColor = conf['fontColor'] || CityPicker.fontColor;
+	var borderColor = conf['borderColor'] || CityPicker.borderColor;
 	var fontSize = conf['fontSize'] || CityPicker.fontSize;
 	var selectorGap = conf['selectorGap'] || CityPicker.selectorGap;
 	//布尔值取参特殊
@@ -128,7 +130,7 @@ function CityPicker(parent, conf, data) {
 		//添加class
 		$(selector).addClass("picker-selector");
 		$(text).addClass("text");
-		$(flag).addClass("icon flag-icon flag");
+		$(flag).addClass("myicon flag-icon flag");
 		//设置属性文本
 		if(isMultiSelect) {
 			$(text).text(obj['text']);
@@ -141,13 +143,13 @@ function CityPicker(parent, conf, data) {
 		var h = (parseInt(pickerMinHeight.substr(0, pickerMinHeight.length-2))-6-6-2)+"px";
 		$(selector).css({"margin-right": selectorGap});
 		$(text).css({"font-size": fontSize});
-		$(flag).css({"color": themeColor});
+		$(flag).css({"color": fontColor});
 		if(hasDefaultValue) {
 			selector.selectedNumber = isMultiSelect?{"0": true}:0;
 			$(selector).css({"color": backgroundColor, "height": h, "line-height": h, "background": themeColor, "border": "1px solid "+themeColor});
 			$(flag).css({"color": backgroundColor});
 		} else {
-			$(selector).css({"color": themeColor, "height": h, "line-height": h, "background": backgroundColor, "border": "1px solid "+themeColor});
+			$(selector).css({"color": fontColor, "height": h, "line-height": h, "background": backgroundColor, "border": "1px solid "+borderColor});
 		}
 		
 		//设置父子关系
@@ -156,7 +158,7 @@ function CityPicker(parent, conf, data) {
 		$(parent).append(selector);
 		if(hasDefaultSelector && $(selector).index() == 0) {
 			selectedSelector = 0;
-			$(flag).removeClass("icon flag-icon");
+			$(flag).removeClass("myicon flag-icon");
 			$(selector).css({"color": backgroundColor, "background": themeColor, "border": "1px solid "+themeColor});
 		}
 		return selector;
@@ -212,8 +214,8 @@ function CityPicker(parent, conf, data) {
 				$(selectors).each(function() {
 					if(hasDefaultSelector && $(this).index() == 0) return;
 					if(this.selectedNumber == null) {
-						$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
-						$(this).children('.flag').css("color", themeColor);
+						$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});
+						$(this).children('.flag').css("color", fontColor);
 					} else {
 						if(typeof(this.selectedNumber) == "number") {
 							$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
@@ -230,8 +232,8 @@ function CityPicker(parent, conf, data) {
 								$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
 								$(this).children('.flag').css("color", backgroundColor);
 							} else {
-								$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
-								$(this).children('.flag').css("color", themeColor);
+								$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});
+								$(this).children('.flag').css("color", fontColor);
 							}
 						}
 					}
@@ -249,9 +251,9 @@ function CityPicker(parent, conf, data) {
 				this.isOpen = true;
 				//改变flag的图标
 				$(this).children('.flag').addClass('rotate');
-				$(this).children('.flag').css("color", themeColor);
+				$(this).children('.flag').css("color", fontColor);
 				//改变改变选中状态
-				$(this).css({"background": panelColor, "border": "1px solid "+panelColor, "color": themeColor});
+				$(this).css({"background": panelColor, "border": "1px solid "+panelColor, "color": fontColor});
 				$(panel).show();
 			} else {//已经展开，则关闭此selector
 				this.isOpen = false;
@@ -268,16 +270,16 @@ function CityPicker(parent, conf, data) {
 						$(this).children('.flag').css("color", backgroundColor);//改变flag的图标
 						$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});//改变改变选中状态
 					} else {
-						$(this).children('.flag').css("color", themeColor);//改变flag的图标
-						$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});//改变改变选中状态
+						$(this).children('.flag').css("color", fontColor);//改变flag的图标
+						$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});//改变改变选中状态
 					}
 				} else {//单选模式
 					if(this.selectedNumber != null) {
 						$(this).children('.flag').css("color", backgroundColor);//改变flag的图标
 						$(this).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});//改变改变选中状态
 					} else {
-						$(this).children('.flag').css("color", themeColor);//改变flag的图标
-						$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});//改变改变选中状态
+						$(this).children('.flag').css("color", fontColor);//改变flag的图标
+						$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});//改变改变选中状态
 					}
 				}
 				//移除flag图标的旋转
@@ -301,8 +303,8 @@ function CityPicker(parent, conf, data) {
 								this.selectedNumber = {};
 							}
 							this.isOpen = false;
-							$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
-							$(this).children('.flag').css("color", themeColor);
+							$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});
+							$(this).children('.flag').css("color", fontColor);
 							$(this).children('.flag').removeClass('rotate');
 						});
 						selectedSelector = 0;
@@ -414,8 +416,8 @@ function CityPicker(parent, conf, data) {
 				} else {
 					this.selectedNumber = {};
 				}
-				$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
-				$(this).children('.flag').css("color", themeColor);
+				$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});
+				$(this).children('.flag').css("color", fontColor);
 			});
 			selectedSelector = $(panelFor).index();
 //			$(panelFor).css({"background": themeColor, "border": "1px solid "+themeColor, "color": backgroundColor});
@@ -449,8 +451,8 @@ function CityPicker(parent, conf, data) {
 		//清除其他选择状态
 		$(this.dom).children('.picker-title').children().each(function() {
 			this.selectedNumber = {};
-			$(this).css({"background": backgroundColor, "border": "1px solid "+themeColor, "color": themeColor});
-			$(this).children('.flag').css("color", themeColor);
+			$(this).css({"background": backgroundColor, "border": "1px solid "+borderColor, "color": fontColor});
+			$(this).children('.flag').css("color", fontColor);
 			$(this).children('.flag').removeClass('rotate');
 		});
 		selectedSelector = 0;
